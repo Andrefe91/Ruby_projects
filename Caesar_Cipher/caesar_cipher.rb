@@ -1,68 +1,25 @@
 # Caesar Cipher implementation in Ruby for The Odin Project
 
-def transform_upcase (character)
-
-  character = normalize(character)
-
-  #First, we define the configuration array for the replacements
-  replacement_array_upcase = ('A'..'Z').zip(1..26).to_h
-
-  #And now check for the replacement
-  return replacement_array_upcase[character] if character.is_a? String
-  return replacement_array_upcase.key(character) if character.is_a? Integer
-
-end
-
-def transform_downcase (character)
-
-  character = normalize(character)
-
-  #First, we define the configuration array for the replacements
-  replacement_array_downcase = ('a'..'z').zip(1..26).to_h
-
-  #And now check for the replacement
-  return replacement_array_downcase[character] if character.is_a? String
-  return replacement_array_downcase.key(character) if character.is_a? Integer
-
-end
-
-def normalize (character)
-
-  if character.is_a? String
-    return character
-  else
-    return character - 26 if character > 26
-    return character if character < 26
-  end
-end
-
 def caesar_transformation (phrase, shift_factor = 0)
 
-  replaced_phrase = []
+  transformed_phrase = ''
 
-  #To operate on array, we change the phrase
-  phrase_array = phrase.split('')
+  phrase.each_char do |char|
 
-  phrase_array.map do |letter|
-    if letter == ' '
-      replaced_phrase.push(' ')
+    if (char.ord.between?(65,90)) || (char.ord.between?(97,122))
+      
+      base = char.ord.between?(65,90) ? 65 : 97
 
-    elsif (letter =~ /[a-zA-Z]/) == nil
-      replaced_phrase.push(letter)
+      new_char = base + (((char.ord + shift_factor)-base) % 26)
 
-    elsif letter == letter.upcase
-      replaced_phrase.push(
-        transform_upcase(transform_upcase(letter)+shift_factor)
-      )
-
-    else
-      replaced_phrase.push(
-        transform_downcase(transform_downcase(letter)+shift_factor)
-      )
+      transformed_phrase += new_char.chr
+    elsif
+      # Ignore the non alphabetic characters
+      transformed_phrase += char
     end
   end
 
-  replaced_phrase.join
+  transformed_phrase
 end
 
 puts "Please enter the phrase: "
