@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Implementation of the Tic-Tac-Toe game in Ruby for The Odin Project.
 
 class Board
@@ -9,10 +11,10 @@ class Board
   end
 
   def play(coordinate, symbol)
-    unless coordinate.to_int > 10
-      @board[coordinate] = symbol
-      track_positions(coordinate)
-    end
+    return if coordinate.to_int > 10
+
+    @board[coordinate] = symbol
+    track_positions(coordinate)
   end
 
   def return_board
@@ -42,7 +44,7 @@ class Player
 
   attr_accessor :name, :symbol
 
-  def initialize(name = "Player", symbol)
+  def initialize(name = 'Player', symbol)
     @name = name
     @symbol = symbol
     @@player_number += 1
@@ -58,23 +60,21 @@ def pretty_print(object)
   values = object.return_board
 
   puts "\n"
-  for i in 0..2 do
+  3.times do |i|
     print "#{values[3 * i]} | #{values[3 * i + 1]} | #{values[3 * i + 2]}\n"
-    if i < 2
-      print "--+--+--\n"
-    end
+    print "--+--+--\n" if i < 2
   end
   puts "\n"
 end
 
 def game(tablero, player1, player2)
-  while true
+  loop do
     [player1, player2].each do |player|
       print "It's #{player.name} turn, choose your position: "
       move = gets.chomp.to_i
 
       if tablero.positions.include?(move)
-        puts "Position already selected, you loose your turn"
+        puts 'Position already selected, you loose your turn'
       else
         tablero.play(move, player.symbol)
       end
@@ -91,27 +91,27 @@ end
 
 
 tablero = Board.new
-puts "--------------------------------"
-puts "Game Starts!!"
-puts "--------------------------------"
-print "Please Player 1, enter your name: "
+puts '--------------------------------'
+puts 'Game Starts!!'
+puts '--------------------------------'
+print 'Please Player 1, enter your name: '
 name = gets.chomp
-print "And now, your prefered Symbol: "
+print 'And now, your prefered Symbol: '
 symbol = gets.chomp
 symbol = symbol.length > 1 ? symbol[0] : symbol
 player1 = Player.new(name, symbol)
 
-puts "--------------------------------"
-print "Please Player 2, enter your name: "
+puts '--------------------------------'
+print 'Please Player 2, enter your name: '
 name = gets.chomp
-print "And now, your prefered Symbol: "
+print 'And now, your prefered Symbol: '
 symbol = gets.chomp
 symbol = symbol.length > 1 ? symbol[0] : symbol
 player2 = Player.new(name, symbol)
 
-puts "--------------------------------"
-puts "Ok, Lets Play !!!!!!"
-puts "--------------------------------"
+puts '--------------------------------'
+puts 'Ok, Lets Play !!!!!!'
+puts '--------------------------------'
 puts 'This is your board:'
 puts "\n"
 pretty_print(tablero)
