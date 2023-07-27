@@ -8,7 +8,7 @@ end
 class Board
 
   include RandomNumber
-  attr_accessor :state, :code
+  attr_accessor :state
 
   def initialize (code=0)
     @state = {}
@@ -24,6 +24,14 @@ class Board
   #Method used to return last pegs, usefull to check for the win condition
   def return_last_pegs
     state.values[state.length - 1]
+  end
+
+  def pretty_print
+    puts "-----------------------------------------------"
+    state.values.length.times do |i|
+      puts "Turn #{i+1} | #{state.keys[i]} => #{state.values[i]}"
+    end
+    puts "-----------------------------------------------"
   end
 
   private
@@ -51,6 +59,8 @@ class Board
     pegs
   end
 
+
+
 end
 
 class HumanPlayer
@@ -70,11 +80,12 @@ class ComputerPlayer
 end
 
 
-board = Board.new(1111)
+board = Board.new
 
 board.guess(1234)
 board.guess(6514)
 board.guess(1444)
 board.guess(1111)
-p board.state
+
 p board.return_last_pegs
+board.pretty_print
