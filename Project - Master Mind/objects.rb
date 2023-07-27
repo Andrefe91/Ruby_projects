@@ -34,6 +34,15 @@ class Board
     puts "-----------------------------------------------"
   end
 
+  def empty?
+    state.empty?
+  end
+
+  def full?
+    max_number_of_turns = 12
+    state.size >= 12 ? true : false
+  end
+
   private
 
   def key_pegs(cracker_code)
@@ -74,18 +83,10 @@ class HumanPlayer
 end
 
 class ComputerPlayer
+  include RandomNumber
+
   def initialize
     @name = 'Computer Player'
   end
+  
 end
-
-
-board = Board.new
-
-board.guess(1234)
-board.guess(6514)
-board.guess(1444)
-board.guess(1111)
-
-p board.return_last_pegs
-board.pretty_print
