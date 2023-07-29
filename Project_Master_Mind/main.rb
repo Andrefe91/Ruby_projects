@@ -2,6 +2,8 @@ require './objects.rb'
 require './game.rb'
 require 'pry-byebug'
 
+
+
 def player_selection
   puts '1 - Code Maker'
   puts '2 - Code Cracker'
@@ -25,15 +27,19 @@ def player_selection
 end
 
 
-
 def start
 
   puts '---------------------------------------------------------'
   puts 'Welcome to Master Mind, a Ruby implementation on console'
   puts '---------------------------------------------------------'
   puts 'First, Choose and option:'
-  p player_selection
-
+  role = player_selection
+  puts role
+  puts "Alright Code #{role}, time to play"
+  test_game = Game.new(role)
+  p test_game.class
 end
+
+
 
 start
