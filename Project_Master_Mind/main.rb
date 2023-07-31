@@ -60,24 +60,21 @@ def code_maker_mode (game_object)
   all_possible_patterns = "123456".chars.product(*[["1","2","3","4","5","6"]]*3).map(&:join)
   guesses_left = all_possible_patterns
 
-  #Partial implementation of the Donald knuth's algorithm, doesnt win in 5 always,
-  #but almost. Doesnt use minimax, but a simple approach with just a process of
-  #elimination.
+  guess = '1122'
 
   while true
-
-    guess = all_possible_patterns.sample
     puts "The computer chose: #{guess}"
     guesses_left.delete(guess)
     board.use_guess(guess)
     board.pretty_print
 
 
-    key_pegs_minimax(guess, all_possible_patterns, board.return_last_pegs)
-    if board.return_last_pegs == ['@', '@', '@', '@']
-      puts 'The computer cracked your code :P'
-      break
-    end
+    possibilities = key_pegs_minimax(guess, all_possible_patterns.dup, board.return_last_pegs)
+
+    puts 'The Computer broke your code :P' if board.return_last_pegs == ['@', '@', '@', '@']
+    break if board.return_last_pegs == ['@', '@', '@', '@']
+    guess = minimax(guesses_left, possibilities)
+
   end
 end
 

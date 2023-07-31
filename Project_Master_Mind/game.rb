@@ -90,21 +90,25 @@ end
 
 def minimax (guesses_left, possibilities)
 
-  guess = guesses_left[0]
+  max_count_of_guesses = guesses_left.map do |guess|
 
-  #For the array of possible patterns calculated in the last iteration,
-  # calculate with one of the guesses left the number of possible matches
-  #in that array. That way, we can maximize the number of possible eliminations
-  #for the possible patterns.
-  guesses_hit_list = possibilities.each_with_object(Hash.new(0)) do |possible_guess, counts|
+    #For the array of possible patterns calculated in the last iteration,
+    # calculate with one of the guesses left the number of possible matches
+    #in that array. That way, we can maximize the number of possible eliminations
+    #for the possible patterns.
+    guesses_hit_list = possibilities.each_with_object(Hash.new(0)) do |possible_guess, counts|
 
-    temporal_board = Board.new(guess)
-    counts[temporal_board.key_pegs(possible_guess.chars.map(&:to_i))] += 1
+      temporal_board = Board.new(guess)
+      counts[temporal_board.key_pegs(possible_guess.chars.map(&:to_i))] += 1
+    end
+
+    max_number_of_possibilities = guesses_hit_list.values.max || 0
+    included = possibilities.include?(guess)
+
+    included ? [max_number_of_possibilities, guess]:nil
+
   end
 
-  max_number_of_possibilities = guesses_hit_list.values.max || 0
-
-  p "[Debug] Max Number of Posibilities: #{max_number_of_possibilities}"
-
-  guesses_hit_list
+  max_count_of_guesses.delete(nil)
+  max_count_of_guesses.min.last
 end
