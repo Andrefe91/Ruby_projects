@@ -39,6 +39,7 @@ end
 def ask_code (game_object)
   print "Please, enter the code for the Computer to crack: "
   code = gets.chomp
+  puts '------------------------------------------------------'
 
   if game_object.valid_guess?(code)
     return code
@@ -84,5 +85,26 @@ def key_pegs_minimax (guess, pattern_list, last_key_pegs)
     temporal_board.key_pegs(pattern.chars.map(&:to_i)) != last_key_pegs
   end
 
-  p pattern_list
+  pattern_list
+end
+
+def minimax (guesses_left, possibilities)
+
+  guess = guesses_left[0]
+
+  #For the array of possible patterns calculated in the last iteration,
+  # calculate with one of the guesses left the number of possible matches
+  #in that array. That way, we can maximize the number of possible eliminations
+  #for the possible patterns.
+  guesses_hit_list = possibilities.each_with_object(Hash.new(0)) do |possible_guess, counts|
+
+    temporal_board = Board.new(guess)
+    counts[temporal_board.key_pegs(possible_guess.chars.map(&:to_i))] += 1
+  end
+
+  max_number_of_possibilities = guesses_hit_list.values.max || 0
+
+  p "[Debug] Max Number of Posibilities: #{max_number_of_possibilities}"
+
+  guesses_hit_list
 end

@@ -65,12 +65,19 @@ class Board
 
       if number == @code[i]
         pegs.push('@')
-      elsif (@code.include?(number) && !awarded.include?(number))
+        awarded.push(number)
+      end
+      i += 1
+    end
+
+    cracker_code.each do |number|
+
+      if (@code.include?(number) && !awarded.include?(number))
         pegs.push('O')
+        awarded.push(number)
       end
 
       i += 1
-      awarded.push(number)
     end
 
     pegs.sort_by { |each| each == '@' ? 0 : 1 }
