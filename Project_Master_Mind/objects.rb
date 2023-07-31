@@ -1,6 +1,11 @@
 module RandomNumber
   def randomNumber
-    rand(1111..6666)
+    number = []
+    number[0] = rand(1..6)
+    number[1] = rand(1..6)
+    number[2] = rand(1..6)
+    number[3] = rand(1..6)
+    number.join
   end
 end
 
@@ -8,15 +13,17 @@ end
 class Board
 
   include RandomNumber
-  attr_accessor :state
+  attr_accessor :state, :code
 
   def initialize (code=0)
     @state = {}
     @code = (code == 0 ? randomNumber : code).to_s.split('').map { |s| s.to_i }
   end
 
+
+
   #Method used to register each guess and generate the "pegs"
-  def guess(cracker_code)
+  def use_guess(cracker_code)
     cracker_code = cracker_code.to_s.split('').map { |s| s.to_i }
     state[cracker_code] = key_pegs(cracker_code)
   end
@@ -43,7 +50,9 @@ class Board
     state.size >= 12 ? true : false
   end
 
-  private
+  def win?
+    return_last_pegs == ["@", "@", "@", "@"] ? true : false
+  end
 
   def key_pegs(cracker_code)
 
@@ -58,18 +67,14 @@ class Board
         pegs.push('@')
       elsif (@code.include?(number) && !awarded.include?(number))
         pegs.push('O')
-      else
-        pegs.push('_')
       end
 
       i += 1
       awarded.push(number)
     end
-    pegs
+
+    pegs.sort_by { |each| each == '@' ? 0 : 1 }
   end
-
-
-
 end
 
 class HumanPlayer
@@ -88,5 +93,6 @@ class ComputerPlayer
   def initialize
     @name = 'Computer Player'
   end
-  
+
 end
+

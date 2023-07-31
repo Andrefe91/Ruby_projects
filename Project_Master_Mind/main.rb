@@ -3,30 +3,6 @@ require './game.rb'
 require 'pry-byebug'
 
 
-
-def player_selection
-  puts '1 - Code Maker'
-  puts '2 - Code Cracker'
-
-  print 'Whats your selected role?: '
-  selection = gets.chomp
-
-  if selection == '1'
-    return 'Maker'
-  elsif selection == '2'
-    return 'Cracker'
-  else
-    puts "\n"
-    puts '-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-'
-    puts 'Sorry, invalid selection. Try again'
-    puts '-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-'
-    puts "\n"
-    player_selection
-  end
-
-end
-
-
 def start
 
   puts '---------------------------------------------------------'
@@ -34,12 +10,63 @@ def start
   puts '---------------------------------------------------------'
   puts 'First, Choose and option:'
   role = player_selection
-  puts role
+  puts '-----------------------------------'
   puts "Alright Code #{role}, time to play"
-  test_game = Game.new(role)
-  p test_game.class
+  game_object = Game.new(role)
+
+
+  #Implementation for the two game modes, for the moment, just the Human Player (Code Cracker Mode)
+
+  #Calling the Code Cracker Mode
+  code_cracker_mode (game_object) if role == 'Cracker'
+
+  #Calling the Code Maker Mode
+  code_maker_mode (game_object) if role == 'Maker'
+
+
+
 end
 
+def code_cracker_mode (game_object)
+  board = Board.new
+  #p "[Debug] Code: #{board.code}"
+  puts "The computer decided on a code. Try to crack it !!"
+  puts '---------------------------------------------------'
+
+  while (board.full? == false && board.win? == false)
+    #p "[Debug] Full: #{board.full?} and Win Condition: #{board.win?}"
+    guess = ask_guess (game_object)
+    board.use_guess (guess)
+    board.pretty_print
+  end
+
+  if board.win? == true
+    puts '-----------------------------------------------------------'
+    puts "Congratulations, you cracked the code and won the game !!!"
+    puts '-----------------------------------------------------------'
+  else
+    puts '-------------------------------------------------------'
+    puts "The code you were looking for was: #{board.code}"
+    puts "Sorry, you couldn't crack the code and lost the game "
+    puts '-------------------------------------------------------'
+  end
+end
+
+def code_maker_mode (game_object)
+
+  code = ask_code(game_object)
+  p code
+  board = Board.new(code)
+
+  all_possible_patterns = "123456".chars.product(*[["1","2","3","4","5","6"]]*3).map(&:join)
+  guess = "1122"
+
+  board.use_guess(guess)
+  board.pretty_print
+
+  possibilities = key_pegs_minimax(guess, all_possible_patterns, board.return_last_pegs)
+  p possibilities.length
+end
 
 
 start
