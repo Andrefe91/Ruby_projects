@@ -40,6 +40,8 @@ end
 def main
   puts 'Event Manager Initialized!'
 
+  template_letter = File.read('form_letter.html')
+
   contents = CSV.open('event_attendees.csv', headers: true, header_converters: :symbol)
 
   contents.each do |row|
@@ -52,6 +54,8 @@ def main
 
     puts "#{name} | #{zipcode} | #{legislators}"
   end
+
+
 end
 
 main
