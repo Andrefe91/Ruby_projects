@@ -14,28 +14,95 @@ def save_file(filename, object)
   File.open(filename + ".yaml", 'w') do |file|
     file.write(YAML.dump(object))
   end
-  puts "Game saved !!"
+  print_space("Game saved !!")
 end
 
-def load_file(filename)
+def load_file
+  print "Name of the Save Game to load: "
+  filename = gets.chomp
   #Open the file with a rescue clause in case the file doesn't exist
   begin
     File.open(filename + ".yaml", 'r') do |file|
       object =  YAML.safe_load(file, permitted_classes: [Hangman])
+      print_space("Game loaded !!")
       #Return the object or else stop existing after the block
       return object
     end
   rescue Errno::ENOENT
-    puts "Error, no file found for file \"#{filename}.yaml\""
+    puts "** Error, no file found under the name: \"#{filename}.yaml\" **"
   end
 end
 
-def main
-  #Open reference file
+def print_space(phrase)
+  #Prints the lines for messages format
+  puts "****************************************"
+  (1..(39-phrase.length)/2).each { |each| print " " }
+  print " #{phrase} "
+  (1..(39-phrase.length)/2).each { |each| print " " }
+  puts ""
+  puts "****************************************"
+end
+
+def new_game
+  print "Alright, a new random word is gonna be choosen, write the desired number of turns: "
+
+  while
+    turns = gets.chomp.to_i
+    break unless turns == 0
+    print_error("number")
+    print "Write the desired number of turns: "
+  end
+
+  #Open the file with the given word list and choose a random one
   file = File.open('google-10000-english-no-swears.txt')
+  game = Hangman.new(random_word(file),turns)
+  print_space("Game Created, starting...")
+  return game
+end
+
+def player_selection
+  puts 'Game Modes'
+  puts '-------------'
+  puts '1 - New Game'
+  puts '2 - Load Game'
+
+  print 'Select an option: '
+  selection = gets.chomp
+
+  if selection == '1'
+    return new_game
+  elsif selection == '2'
+    return load_file
+  else
+    print_error ("option")
+    player_selection
+  end
+
+end
+
+def print_error (word)
+  puts "\n"
+  puts '-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-'
+  puts "Sorry, invalid #{word}. Try again"
+  puts '-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-'
+  puts "\n"
+end
+
+def main
+  puts '-----------------------------------------------------'
+  puts 'Welcome to Hang-Man, a Ruby implementation on console'
+  puts '-----------------------------------------------------'
+  game_object = player_selection
+
+  #Only Pretty Print the object if it isnt nil, so no "NoMethodError" is raised
+  (puts game_object.pretty_print) unless game_object.nil?
+
+  #Calls the method to add a letter to the Hangman object or bring the option to save the game to file
+
+
+
 
   %{
-  game = Hangman.new(random_word(file),6)
   puts game.word
   puts game.pretty_print
   game.guess("a")
@@ -48,30 +115,7 @@ def main
   puts game.pretty_print
   game.guess("u")
   puts game.pretty_print
-  game.guess("u")
-
-  object = YAML.dump(game)
-  puts object
-
-  other = YAML.safe_load(object, permitted_classes: [Hangman])
-
-  puts other.pretty_print
-
-  puts "Specify the name of the Save File: "
-  filename = gets.chomp
-  save_file(filename, game)
-  }
-
-  puts "Name of the Save File to open: "
-  filename = gets.chomp
-  object = load_file(filename)
-  p object.nil?
-
-  #Only Pretty Print the object if it isnt nil, so no "NoMethodError" is raised
-  (puts object.pretty_print) unless object.nil?
-
-
-
+  game.guess("u")}
 
 end
 
