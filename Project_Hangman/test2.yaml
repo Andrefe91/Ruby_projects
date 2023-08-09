@@ -1,0 +1,16 @@
+--- !ruby/object:Hangman
+word: think
+max_turns: 6
+guesses: 6
+used_letters:
+- a
+- e
+- i
+- o
+- u
+game_array:
+- _
+- _
+- i
+- _
+- _

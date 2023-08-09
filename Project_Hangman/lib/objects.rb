@@ -10,9 +10,11 @@ class Hangman
   end
 
   def guess(letter)
-    @guesses += 1
-    add_letter(letter) if in_word?(letter) && @guesses <= @max_turns
-    used_letters.push(letter) unless used_letters.include?(letter)
+    unless over_turn?
+      @guesses += 1
+      add_letter(letter) if in_word?(letter) && @guesses <= @max_turns
+      used_letters.push(letter) unless used_letters.include?(letter)
+    end
   end
 
   def word_length
@@ -20,7 +22,8 @@ class Hangman
   end
 
   def pretty_print
-    "Turn: #{guesses} | #{@game_array.join(" ")}"
+    "Turn: #{over_turn? ? "Over Turn" : guesses.to_s+"/"+@max_turns.to_s} | #{
+      @game_array.join(" ")} => Used Letters: #{@used_letters}"
   end
 
   def in_word?(letter)
@@ -28,11 +31,11 @@ class Hangman
   end
 
   def win?
-    @word == @game_array.join("")
+    @word == @game_array.join("") && @guesses <= @max_turns
   end
 
   def over_turn?
-    @guess >= @max_turns
+    @guesses > @max_turns
   end
 
   private
@@ -43,6 +46,5 @@ class Hangman
 
   def add_letter(letter)
     @word.split("").each_with_index {|each, index| @game_array[index] = letter if each == letter}
-    @game_array
   end
 end
