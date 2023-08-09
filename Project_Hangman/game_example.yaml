@@ -1,7 +1,7 @@
 --- !ruby/object:Hangman
-word: setup
-max_turns: 6
-guesses: 6
+word: message
+max_turns: 10
+guesses: 3
 used_letters:
 - a
 - e
@@ -12,5 +12,7 @@ game_array:
 - _
 - e
 - _
-- u
 - _
+- a
+- _
+- e
