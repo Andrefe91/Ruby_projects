@@ -15,26 +15,31 @@ end
 #p fibs(10000)
 
 
-def divide_array(array, sorted = [])
-  #p "And sorted array: #{sorted}"
-  #p "#{array} and array.length: #{array.length}"
-  (array.each_slice((array.length*0.5).round) {|divided| divide_array(divided, sorted)}) if array.length > 2
-
-  p "Array is #{array}"
-
+def divide_array(array)
+  return array if array.length <= 1
 
   if array.length == 2
     max = array.max
     array[0] = array.min
     array[1] = max
-  else
-    array
+    return array
   end
 
-  p "Array length is: #{array.length}"
+  divided = array.each_slice((array.length*0.5).round).to_a
+  sorted = divided.map {|sub_array| divide_array(sub_array)}
 
-  p "After function recursion: #{array}"
-  array
+  p "Array is #{array}"
+  p "Sorted is: #{sorted}"
+
+  return sorted
 end
 
 p divide_array([4,7,3,1,9,5,7])
+
+def recurrent(array=[0])
+  p 'First'
+  (array.push(1) && recurrent(array)) if array.length < 8
+  array.push('a')
+end
+
+#p recurrent([1])
