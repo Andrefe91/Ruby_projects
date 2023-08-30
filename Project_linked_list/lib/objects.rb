@@ -1,7 +1,7 @@
 #Linked list implementation in ruby for The Odin Project
 
 class Node
-  attr_accessor :value, :next_node, :prev_node
+  attr_accessor :value, :next_node, :prev_node, :size
 
   def initialize(value)
     @value = value
@@ -98,22 +98,26 @@ class LinkedList
 
   def at(position)
 
-    #If position is negative, the values are seek from the tail position
-    (position = @size + position) if position < 0
+    begin
+      #If position is negative, the values are seek from the tail position
+      (position = @size + position) if position < 0
 
-    #If index is bigger than the linked list size
-    return nil if (position+1 > @size || position < 0)
+      #start from the head
+      node = @head
 
-    #start from the head
-    node = @head
+      #and then traverse the list
+      position.times do
+        node = node.next_node
+      end
 
-    #and then traverse the list
-    position.times do
-      node = node.next_node
+      #and then return value
+      node.value
+
+    rescue NoMethodError
+      return nil
     end
 
-    #and then return value
-    node.value
+
   end
 
   def pop
@@ -169,32 +173,71 @@ class LinkedList
 
   def insert_at(value, index)
 
-    if index == 0
-      prepend(value)
-    elsif index == (@size-1)
-      append(value)
-    else
-      new_node = Node.new(value)
-      node = @head
+    begin
 
-      #Traverse the list up to node at index
-      (index-1).times do
-        node = node.next_node
+      if index == 0
+        prepend(value)
+      elsif index == (@size-1)
+        append(value)
+      else
+        node = @head
+
+        #Traverse the list up to node at index
+        (index).times do
+          node = node.next_node
+        end
+
+        before = node
+        after = node.next_node
+
+        #Create the new node
+        new_node = Node.new(value)
+
+        #Update the relative links of the tree nodes
+        before.next_node = new_node
+        after.prev_node = new_node
+
+        new_node.prev_node = before
+        new_node.next_node = after
+        @size += 1
       end
 
-      before = node
-      after = node.next_node
-
-      #Update the relative links of the tree nodes
-
-      before.next_node = new_node
-      after.prev_node = new_node
-
-      new_node.prev_node = before
-      new_node.next_node = after
+    rescue NoMethodError
+      puts "Could not insert, invalid index!"
     end
 
   end
+
+  def remove_at(index)
+    if index == 0
+      node = @head.next_node
+      node.prev_node = nil
+      @head = node
+      @size -= 1
+    elsif index == (@size - 1)
+      pop
+    else
+      node = @head
+
+      #Traverse the list up to node at index
+      index.times do
+        node = node.next_node
+      end
+
+      #Create pointers to the nodes before and after
+      before = node.prev_node
+      after = node.next_node
+
+      before.next_node = after
+      after.prev_node = before
+
+      node.prev_node = nil
+      node.next_node = nil
+
+      @size -= 1
+    end
+  end
+
 
 end
 
@@ -222,7 +265,7 @@ test.to_s
 print "The list contains the number 5?: "
 p test.contains?(5)
 
-puts "The value at a given (0) index is: #{test.at(0)}"
+puts "The value at a given (0) index is: #{test.at(1)}"
 
 print "The index for the search value (4) is: "
 p test.find(4)
@@ -230,9 +273,13 @@ p test.find(4)
 print "The index for the search value (text) is: "
 puts test.find('text')
 
-test.insert_at('insert', 3)
+test.insert_at('test', 3)
 
-puts "Inserting the node 'test' at index 3 gets us this linked list:"
+puts "Inserting the node 'test' at index 4 gets us this linked list:"
+test.to_s
+
+puts "Removing the node at index 2, gets us this linked list:"
+test.remove_at(2)
 test.to_s
 
 #The at(value) method needs work to return nil when index is negative and bigger than size
