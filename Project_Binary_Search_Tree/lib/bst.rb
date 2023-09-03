@@ -115,34 +115,213 @@ class Tree
     parent = node.parent
 
     #For the case the node that holds the given value is the root node
+    if node == @root
+      child = node.right_child
+      while true
+        unless child.left_child.nil?
+          child =  child.left_child
+        else
+          break
+        end
+      end
 
-
+      #Updating the connections in the tree:
+      delete(child.value) #The node has to be deleted in order to avoid a circular tree
+      child.left_child = root.left_child
+      child.right_child = root.right_child
+      child.parent = nil
+      @root = child
+      return #This helps to avoid overlap in checks
+    end
 
     #For the case the node that holds the given value is a leaf node
     if node.left_child.nil? && node.right_child.nil?
-      if parent.left_child.value == node.value
+      if parent.left_child == node
         parent.left_child = nil
       else
         parent.right_child = nil
       end
+      return #This helps to avoid overlap in checks
     end
 
     #For the case the node that holds the given value only has one child
+    if node.left_child.nil? || node.right_child.nil?
+      child = (node.left_child || node.right_child)
+
+      parent.left_child === node ? parent.left_child = child : parent.right_child = child
+
+      child.parent = parent
+      return #This helps to avoid overlap in checks
+    end
+
 
 
     #For the case the node that holds the given value has two childs
+    unless node.left_child.nil? && node.right_child.nil?
+      child = node.right_child
+      while true
+        unless child.left_child.nil?
+          child =  child.left_child
+        else
+          break
+        end
+      end
 
+      delete(child.value) #The node has to be deleted in order to avoid a circular tree
+
+      #Updating the connections in the tree:
+      parent.left_child == node ? parent.left_child = child : parent.right_child = child
+      child.parent = parent
+
+      child.right_child = node.right_child
+      child.left_child = node.left_child
+
+      child.right_child.parent = child unless child.right_child.nil?
+      child.left_child.parent = child unless child.left_child.nil?
+
+      #No more cases, so no need for a break statement
+    end
+
+  end
+
+  def each
+    #Custom enumerable method for a level order traversal
+    queue = [root]
+
+    #Loop to traverse the BST
+    while true
+      return if queue.empty?
+
+      yield(queue[0])
+
+      #Add to queue the childs of the visited nodes only if they are not nil
+      queue.append(queue[0].left_child) unless queue[0].left_child.nil?
+      queue.append(queue[0].right_child) unless queue[0].right_child.nil?
+
+      #Dequeue the first element in a First In, First Out kind of way
+      queue.delete_at(0)
+    end
+  end
+
+  def level_order(&block)
+
+    array = []
+    #Populate the array with the values of every node give by the enumerable
+    each do |element|
+      block_given? ? block.call(element) : array << element
+    end
+
+    return array
+  end
+
+  def preorder_each(node = @root)
+    #Custom enumerable method for a preorder tree traversal
+    if node.nil?
+      return
+    end
+
+    puts node.value
+    preorder_each(node.left_child)
+    preorder_each(node.right_child)
+  end
+
+  def inorder_each(node = @root)
+    #Custom enumerable method for a inorder tree traversal
+    if node.nil?
+      return
+    end
+
+    inorder_each(node.left_child)
+    puts node.value
+    inorder_each(node.right_child)
+  end
+
+  def postorder_each(node = @root)
+    #Custom enumerable method for a postorder tree traversal
+    if node.nil?
+      return
+    end
+
+    postorder_each(node.left_child)
+    postorder_each(node.right_child)
+    puts node.value
+  end
+
+  def preorder(&block)
+
+    array = []
+    #Populate the array with the values of every node give by the enumerable
+    preorder_each do |element|
+      block_given? ? block.call(element) : array << element
+    end
+
+    return array
+  end
+
+  def inorder(&block)
+
+    array = []
+    #Populate the array with the values of every node give by the enumerable
+    inorder_each do |element|
+      block_given? ? block.call(element) : array << element
+    end
+
+    return array
+  end
+
+  def postorder(&block)
+
+    array = []
+    #Populate the array with the values of every node give by the enumerable
+    postorder_each do |element|
+      block_given? ? block.call(element) : array << element
+    end
+
+    return array
+  end
+
+  def depth(value)
+    node = root
+    depth = 0
+
+    while true
+      return if node.nil?
+
+      if value > node.value
+        node = node.right_child
+      elsif value < node.value
+        node = node.left_child
+      elsif value == node.value
+        return depth
+      end
+      depth += 1
+    end
+  end
+
+  def height(value)
+    node = root
+    height = 0
+
+    
   end
 
 end
 
-test = Tree.new([1,7,4,23,9,8,4,3,5,7,9,67,6345,324])
+test = Tree.new([1,7,4,2,23,9,8,4,3,5,7,9,67,6345,324])
 #test = Tree.new(Array.new(15) {rand(1..100)})
 test.pretty_print
-
+puts "--------------------------------"
 test.insert(11)
 test.pretty_print
-
-
-test.delete(324)
+puts "--------------------------------"
+test.delete(7)
 test.pretty_print
+puts "--------------------------------"
+puts "#Level_order method with a block to print the node values:"
+test.level_order {|node| puts node.value}
+puts "--------------------------------"
+test.inorder {|node| puts node.value}
+puts "--------------------------------"
+test.pretty_print
+puts "--------------------------------"
+p test.depth(4)
