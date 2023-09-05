@@ -280,34 +280,42 @@ class Tree
     return array
   end
 
-  def depth(value)
-    node = root
-    depth = 0
+  def depth(value, node = root)
 
-    while true
-      return if node.nil?
+    return 0 if node.nil?
 
-      if value > node.value
-        node = node.right_child
-      elsif value < node.value
-        node = node.left_child
-      elsif value == node.value
-        return depth
-      end
-      depth += 1
+    #To stop recursion, return when the node is found
+    if node.value == value
+      return 1
     end
+
+    left_depth = depth(value, node.left_child)
+
+    #Only return a value if the node it's found on the left subtree
+    if left_depth > 0
+      return left_depth + 1
+    end
+
+    #Same as the previous condition. This way, the depth of either subtree wont count if the
+    #node isn't found.
+    right_depth = depth(value, node.right_child)
+
+    if right_depth > 0
+      return right_depth + 1
+    end
+
   end
 
   def height(value)
     node = root
     height = 0
 
-    
+
   end
 
 end
 
-test = Tree.new([1,7,4,2,23,9,8,4,3,5,7,9,67,6345,324])
+test = Tree.new([1,7,4,2,23,9,8,4,3,5,7,9, 12, 13, 67,6345,324])
 #test = Tree.new(Array.new(15) {rand(1..100)})
 test.pretty_print
 puts "--------------------------------"
