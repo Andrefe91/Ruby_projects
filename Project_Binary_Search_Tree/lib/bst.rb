@@ -17,7 +17,8 @@ class Node
   end
 
   def inspect
-    "Node with value #{@value}, \n left child \n {#{@left_child.inspect}} \n right child \n {#{@right_child.inspect}}"
+    "Node with value #{@value}"
+    #"Node with value #{@value}, \n left child \n {#{@left_child.inspect}} \n right child \n {#{@right_child.inspect}}"
   end
 
 end
@@ -154,8 +155,6 @@ class Tree
       return #This helps to avoid overlap in checks
     end
 
-
-
     #For the case the node that holds the given value has two childs
     unless node.left_child.nil? && node.right_child.nil?
       child = node.right_child
@@ -280,37 +279,80 @@ class Tree
     return array
   end
 
-  def depth(value, node = root)
+  def depth(value)
 
-    return 0 if node.nil?
+    parents = [root]
+    depth = 0
 
-    #To stop recursion, return when the node is found
-    if node.value == value
-      return 1
+    #Loop to traverse the BST
+    while true
+      children = []
+
+      while true
+        break if parents.empty?
+
+        return depth if parents[0].value == value
+
+        #Add to "children" the childs of the visited nodes only if they are not nil
+        children.append(parents[0].left_child) unless parents[0].left_child.nil?
+        children.append(parents[0].right_child) unless parents[0].right_child.nil?
+
+        #Dequeue the first element in a First In, First Out kind of way
+        parents.delete_at(0)
+      end
+
+      parents = children
+      #This condition exist we can get the depth of the tree with this same method
+      return depth if (parents.empty? && value == "max")
+      return nil if parents.empty?
+      depth += 1
     end
-
-    left_depth = depth(value, node.left_child)
-
-    #Only return a value if the node it's found on the left subtree
-    if left_depth > 0
-      return left_depth + 1
-    end
-
-    #Same as the previous condition. This way, the depth of either subtree wont count if the
-    #node isn't found.
-    right_depth = depth(value, node.right_child)
-
-    if right_depth > 0
-      return right_depth + 1
-    end
-
   end
 
   def height(value)
-    node = root
-    height = 0
+    node = search(value)
+    return nil if node.nil? #Dont continue if the node isnt on the tree
 
+    node_depth = depth(value)
 
+    parents = [node]
+    depth = 0
+
+    #Loop to traverse the BST - Same core logic as the depth method
+    while true
+      children = []
+
+      while true
+        break if parents.empty?
+
+        #Add to "children" the childs of the visited nodes only if they are not nil
+        children.append(parents[0].left_child) unless parents[0].left_child.nil?
+        children.append(parents[0].right_child) unless parents[0].right_child.nil?
+
+        #Dequeue the first element in a First In, First Out kind of way
+        parents.delete_at(0)
+      end
+
+      parents = children
+      return (depth) if parents.empty?
+      depth += 1
+    end
+  end
+
+  def balanced?(node =root)
+    return 0 if node.nil? #Base case for the recursive call
+
+    left_subtree = balanced?(node.left_child)
+    return -1 if left_subtree == -1 #If found imbalance, the whole tree is inbalanced
+
+    #Check balance of the right subtree
+    right_subtree = balanced?(node.right_child)
+    return -1 if right_subtree == -1 #If found imbalance, the whole tree is inbalanced
+
+    #Check for a difference no bigger than one between left and right subtree
+    return -1 if ((left_subtree-right_subtree).abs > 1)
+
+    return ([left_subtree, right_subtree].max + 1)
   end
 
 end
@@ -333,3 +375,7 @@ puts "--------------------------------"
 test.pretty_print
 puts "--------------------------------"
 p test.depth(4)
+puts "--------------------------------"
+p test.height(8)
+puts "--------------------------------"
+p test.balanced?
