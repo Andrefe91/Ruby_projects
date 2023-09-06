@@ -12,7 +12,7 @@ class Node
     @value = value
     @left_child = nil
     @right_child = nil
-    #This is modified version of a BST, where de nodes also connect to their parent
+    #This is a modified version of a BST, where the nodes also connect to their parents
     @parent = nil
   end
 
@@ -26,11 +26,12 @@ end
 class Tree
   attr_reader :array, :root, :size
   def initialize(array)
-    @array = array.uniq!
+    @array = array.uniq
     @root = build_tree
   end
 
   def build_tree
+
     @root = Node.new(array[0])
 
     #With the help of a method we can handle building the tree
@@ -65,6 +66,8 @@ class Tree
         else
           existing_node = existing_node.right_child
         end
+      elsif new_node == existing_node
+        return
       else
         if existing_node.left_child.nil?
           existing_node.left_child = new_node
@@ -183,7 +186,7 @@ class Tree
 
   end
 
-  def each
+  def each(&block)
     #Custom enumerable method for a level order traversal
     queue = [root]
 
@@ -203,80 +206,106 @@ class Tree
   end
 
   def level_order(&block)
-
     array = []
     #Populate the array with the values of every node give by the enumerable
-    each do |element|
-      block_given? ? block.call(element) : array << element
+    if block_given?
+      each do |element|
+        block.call(element)
+      end
+    else
+      #In order to be able to obtain the array when no block is given to Inorder, we pass a custom block
+      #to the inorder enumerable method that append the value to an array. As such, this last method
+      #must be able to recibe such a block, thats why it's added the &block to the enumerable method.
+      each {|element| array << element.value}
+      return array
     end
-
-    return array
   end
 
-  def preorder_each(node = @root)
+  def preorder_each(node = @root, &block)
     #Custom enumerable method for a preorder tree traversal
     if node.nil?
       return
     end
 
-    puts node.value
-    preorder_each(node.left_child)
-    preorder_each(node.right_child)
+    yield(node)
+    preorder_each(node.left_child, &block)
+    preorder_each(node.right_child, &block)
   end
 
-  def inorder_each(node = @root)
-    #Custom enumerable method for a inorder tree traversal
-    if node.nil?
-      return
-    end
-
-    inorder_each(node.left_child)
-    puts node.value
-    inorder_each(node.right_child)
-  end
-
-  def postorder_each(node = @root)
+  def postorder_each(node = @root, &block)
     #Custom enumerable method for a postorder tree traversal
     if node.nil?
       return
     end
 
-    postorder_each(node.left_child)
-    postorder_each(node.right_child)
-    puts node.value
+    postorder_each(node.left_child, &block)
+    postorder_each(node.right_child, &block)
+    yield(node)
+  end
+
+  def inorder_each(node = @root, &block)
+    #Custom enumerable method for a inorder tree traversal
+    if node.nil?
+      return
+    end
+
+    inorder_each(node.left_child, &block)
+    yield(node)
+    inorder_each(node.right_child, &block)
   end
 
   def preorder(&block)
 
     array = []
     #Populate the array with the values of every node give by the enumerable
-    preorder_each do |element|
-      block_given? ? block.call(element) : array << element
+    #
+    if block_given?
+      preorder_each do |element|
+        block.call(element)
+      end
+    else
+      #In order to be able to obtain the array when no block is given to Inorder, we pass a custom block
+      #to the inorder enumerable method that append the value to an array. As such, this last method
+      #must be able to recibe such a block, thats why it's added the &block to the enumerable method.
+      preorder_each {|element| array << element.value}
+      return array
     end
-
-    return array
   end
 
   def inorder(&block)
-
     array = []
     #Populate the array with the values of every node give by the enumerable
-    inorder_each do |element|
-      block_given? ? block.call(element) : array << element
+
+    if block_given?
+      inorder_each do |element|
+        block.call(element)
+      end
+    else
+      #In order to be able to obtain the array when no block is given to Inorder, we pass a custom block
+      #to the inorder enumerable method that append the value to an array. As such, this last method
+      #must be able to recibe such a block, thats why it's added the &block to the enumerable method.
+      inorder_each {|element| array << element.value}
+      return array
     end
 
-    return array
   end
 
   def postorder(&block)
 
     array = []
     #Populate the array with the values of every node give by the enumerable
-    postorder_each do |element|
-      block_given? ? block.call(element) : array << element
-    end
 
-    return array
+    if block_given?
+      postorder_each do |element|
+        block.call(element)
+      end
+    else
+      #In order to be able to obtain the array when no block is given to Inorder, we pass a custom block
+      #to the inorder enumerable method that append the value to an array. As such, this last method
+      #must be able to recibe such a block, thats why it's added the &block to the enumerable method.
+      postorder_each {|element| array << element.value}
+      return array
+    end
   end
 
   def depth(value)
@@ -339,14 +368,14 @@ class Tree
     end
   end
 
-  def balanced?(node =root)
+  def balanced(node =root)
     return 0 if node.nil? #Base case for the recursive call
 
-    left_subtree = balanced?(node.left_child)
+    left_subtree = balanced(node.left_child)
     return -1 if left_subtree == -1 #If found imbalance, the whole tree is inbalanced
 
     #Check balance of the right subtree
-    right_subtree = balanced?(node.right_child)
+    right_subtree = balanced(node.right_child)
     return -1 if right_subtree == -1 #If found imbalance, the whole tree is inbalanced
 
     #Check for a difference no bigger than one between left and right subtree
@@ -355,9 +384,39 @@ class Tree
     return ([left_subtree, right_subtree].max + 1)
   end
 
+  def balanced?
+    balanced == -1 ? false : true
+  end
+
+  def rebalance
+    inorder_values = inorder
+    p inorder_values
+    sorted = []
+    queue = [inorder_values]
+
+    while true
+      break if queue.empty?
+
+      if queue[0].length >= 3
+        middle_index = (queue[0].length/2.0).floor
+        sorted.append(queue[0][middle_index])
+        queue.append(queue[0][..(middle_index-1)])
+        queue.append(queue[0][(middle_index+1)..-1])
+        queue.delete_at(0)
+      else
+        sorted.append(queue[0])
+        queue.delete_at(0)
+      end
+    end
+
+    return Tree.new(sorted.flatten)
+  end
+
 end
 
-test = Tree.new([1,7,4,2,23,9,8,4,3,5,7,9, 12, 13, 67,6345,324])
+%%
+test = Tree.new([1,7,4,2,23,9,8,4,3,5,7,9, 12, 13, 67,6345,324, 628])
+#test = Tree.new([1,2,3,4,5,6,7,8,9])
 #test = Tree.new(Array.new(15) {rand(1..100)})
 test.pretty_print
 puts "--------------------------------"
@@ -370,6 +429,7 @@ puts "--------------------------------"
 puts "#Level_order method with a block to print the node values:"
 test.level_order {|node| puts node.value}
 puts "--------------------------------"
+puts "#Inorder_order method with a block to print the node values:"
 test.inorder {|node| puts node.value}
 puts "--------------------------------"
 test.pretty_print
@@ -379,3 +439,48 @@ puts "--------------------------------"
 p test.height(8)
 puts "--------------------------------"
 p test.balanced?
+puts "--------------------------------"
+test = test.rebalance
+test.pretty_print
+puts "--------------------------------"
+p test.balanced?
+%
+
+excersice_tree = Tree.new((Array.new(15) { rand(1..100) }))
+excersice_tree.pretty_print
+puts "--------------------------------"
+puts "The tree is balanced?: #{excersice_tree.balanced?}?"
+puts "--------------------------------"
+puts "#Level_order method with a block to print the node values:"
+p excersice_tree.level_order
+puts "--------------------------------"
+puts "#Inorder method with a block to print the node values:"
+p excersice_tree.inorder
+puts "--------------------------------"
+puts "#Preorder method with a block to print the node values:"
+p excersice_tree.preorder
+puts "--------------------------------"
+puts "#Postorder method with a block to print the node values:"
+p excersice_tree.postorder
+puts "--------------------------------"
+100.times do
+  excersice_tree.insert(rand(1..100))
+end
+puts "Added 100 elements to the tree:"
+excersice_tree.pretty_print
+puts "--------------------------------"
+puts "The tree is balanced?: #{excersice_tree.balanced?}"
+puts "--------------------------------"
+excersice_tree = excersice_tree.rebalance
+excersice_tree.pretty_print
+puts "--------------------------------"
+puts "The tree is balanced?: #{excersice_tree.balanced?}"
+puts "--------------------------------"
+puts "#Inorder method with a block to print the node values:"
+p excersice_tree.inorder
+puts "--------------------------------"
+puts "#Preorder method with a block to print the node values:"
+p excersice_tree.preorder
+puts "--------------------------------"
+puts "#Postorder method with a block to print the node values:"
+p excersice_tree.postorder
