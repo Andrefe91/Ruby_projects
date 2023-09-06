@@ -26,25 +26,30 @@ end
 class Tree
   attr_reader :array, :root, :size
   def initialize(array)
-    @array = array.uniq
-    @root = build_tree
+    @array = array.uniq.sort
+    @root = build_tree(@array, 0, @array.length-1)
   end
 
-  def build_tree
+  def build_tree(array, first, last)
 
-    @root = Node.new(array[0])
+    #With a recursive behavior it creates the tree. This is similar
+    #to the function that rebalance the tree but with loops.
+    return nil if first > last
 
-    #With the help of a method we can handle building the tree
-    #and inserting nodes into it
-    array[1..].each do |value|
-      insert(value)
-    end
-    @root
+    #It divides the array, selecting halves each function call and making the middle of the array
+    #the root of the subtree.
+    mid = ((first + last)/2).floor
+    node = Node.new(array[mid])
+
+    node.left_child = build_tree(array, first, mid - 1)
+    node.right_child = build_tree(array, mid + 1, last)
+
+    return node
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
 
-    #Pretty printing the tree with recursiononal indentation
+    #Pretty printing the tree with recursional indentation
     pretty_print(node.right_child, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right_child
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.value}"
     pretty_print(node.left_child, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left_child
@@ -390,7 +395,6 @@ class Tree
 
   def rebalance
     inorder_values = inorder
-    p inorder_values
     sorted = []
     queue = [inorder_values]
 
@@ -414,38 +418,8 @@ class Tree
 
 end
 
-%%
-test = Tree.new([1,7,4,2,23,9,8,4,3,5,7,9, 12, 13, 67,6345,324, 628])
-#test = Tree.new([1,2,3,4,5,6,7,8,9])
-#test = Tree.new(Array.new(15) {rand(1..100)})
-test.pretty_print
-puts "--------------------------------"
-test.insert(11)
-test.pretty_print
-puts "--------------------------------"
-test.delete(7)
-test.pretty_print
-puts "--------------------------------"
-puts "#Level_order method with a block to print the node values:"
-test.level_order {|node| puts node.value}
-puts "--------------------------------"
-puts "#Inorder_order method with a block to print the node values:"
-test.inorder {|node| puts node.value}
-puts "--------------------------------"
-test.pretty_print
-puts "--------------------------------"
-p test.depth(4)
-puts "--------------------------------"
-p test.height(8)
-puts "--------------------------------"
-p test.balanced?
-puts "--------------------------------"
-test = test.rebalance
-test.pretty_print
-puts "--------------------------------"
-p test.balanced?
-%
 
+#Parts of the exercise required by the course to check the logic of the different methods:
 excersice_tree = Tree.new((Array.new(15) { rand(1..100) }))
 excersice_tree.pretty_print
 puts "--------------------------------"
@@ -463,6 +437,7 @@ puts "--------------------------------"
 puts "#Postorder method with a block to print the node values:"
 p excersice_tree.postorder
 puts "--------------------------------"
+#Creation of 100 diferent values to add to the tree
 100.times do
   excersice_tree.insert(rand(1..100))
 end
