@@ -21,17 +21,35 @@ end
 class Knight < Pieces
   include Chess_methods
 
+  attr_accessor :position, :state
+  attr_reader :color
+
+  def initialize(position, color)
+    super(position, color)
+    @valid_movements = movements
+  end
+
   def movements
     delta_movements = [[1,2],[2,1],[2,-1],[1,-2],[-1,-2],
     [-2,-1],[-2,1],[-1,2]]
 
     #The method to calculate the movement of the pice
     #according to the delta of movements is in the module.
-    valid_movements = calculate_movements(position, delta_movements)
+    calculate_movements(position, delta_movements)
+  end
+
+  def valid_movements
+    @valid_movements = movements
   end
 end
 
 
 
 
-knight1 = Knight.new([3,3], "black")
+knight1 = Knight.new([0,0], "black")
+knight1.movements
+p knight1.position
+p knight1.color
+p knight1.valid_movements
+knight1.position = [1,7]
+p knight1.valid_movements
