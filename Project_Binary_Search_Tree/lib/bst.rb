@@ -32,7 +32,7 @@ class Tree
 
   def build_tree(array, first, last)
 
-    #With a recursive behavior it creates the tree. This is similar
+    #With a recursive behavior it creates a balanced tree. This is similar
     #to the function that rebalance the tree but with loops.
     return nil if first > last
 
