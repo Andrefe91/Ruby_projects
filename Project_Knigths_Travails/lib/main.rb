@@ -5,7 +5,7 @@ class Pieces
   @@number_of_pieces = 0
   attr_accessor :position, :state
 
-  def initialize(position, color)
+  def initialize(position, color = "black")
     @position = position
     @color = color
     @state = 1 #Binary state, 1 for alive and 0 for dead
@@ -24,8 +24,11 @@ class Knight < Pieces
   attr_accessor :position, :state
   attr_reader :color
 
-  def initialize(position, color)
+  def initialize(position, color = "black")
     super(position, color)
+    #The valid movements are calculated for the position
+    #every update to the position must update the valid
+    #movements
     @valid_movements = movements
   end
 
@@ -43,13 +46,61 @@ class Knight < Pieces
   end
 end
 
+class Node
+  attr_reader :childs, :position
+  def initialize(chess_piece, position = chess_piece.position)
+    @chess_piece = chess_piece
+    @chess_piece.position = position
+    @color = @chess_piece.color
+    @position = position
+    @valid_movements = @chess_piece.valid_movements
+    @childs = nil
+    @child_array = nil
+  end
+
+  def add_childrens
+    array = []
+    @valid_movements.each do |movement|
+      array << Node.new(@chess_piece, movement)
+    end
+
+    @childs = array
+    @child_array = @valid_movements
+  end
+
+  def inspect
+    "Node of a #{@chess_piece.class} with properties ->
+    position: #{@position},
+    color: #{@color},
+    valid movements: #{@valid_movements} and
+    childs: #{
+      @childs.nil? ? "nil" : @child_array
+    } \n"
+  end
+end
+
+class Tree
+  
+end
 
 
-
-knight1 = Knight.new([0,0], "black")
+knight1 = Knight.new([0,0])
 knight1.movements
 p knight1.position
 p knight1.color
 p knight1.valid_movements
 knight1.position = [1,7]
 p knight1.valid_movements
+test = Node.new(knight1)
+p test
+puts "--------------------------------------"
+test.add_childrens
+p test
+puts "--------------------------------------"
+test.childs.each do |child|
+  child.add_childrens
+end
+puts "--------------------------------------"
+test.childs.each do |child|
+  p child
+end
