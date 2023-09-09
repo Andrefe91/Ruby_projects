@@ -47,7 +47,8 @@ class Knight < Pieces
 end
 
 class Node
-  attr_reader :childs, :position
+  attr_accessor :parent, :childs, :child_array
+  attr_reader :position, :valid_movements
   def initialize(chess_piece,
     parent = nil,
     position = chess_piece.position
@@ -62,15 +63,7 @@ class Node
     @child_array = nil
   end
 
-  def add_childrens
-    array = []
-    @valid_movements.each do |movement|
-      array << Node.new(@chess_piece, movement)
-    end
 
-    @childs = array
-    @child_array = @valid_movements
-  end
 
   def inspect
     "Node of a #{@chess_piece.class} with properties ->
@@ -94,7 +87,21 @@ class Tree
     @depth = 0
   end
 
-  
+  def add_childrens(node = @root)
+    array = []
+    valid_movements = node.valid_movements
+
+    valid_movements.each do |movement|
+      child = Node.new(Knight.new(movement))
+      child.parent = node
+
+      array << child
+    end
+
+    node.childs = array
+    node.child_array = valid_movements
+  end
+
 
 end
 
@@ -109,3 +116,9 @@ p knight1.valid_movements
 test = Node.new(knight1)
 puts "--------------------------------------"
 p test
+puts "--------------------------------------"
+tree = Tree.new(Knight.new([1,7]))
+p tree
+puts "--------------------------------------"
+tree.add_childrens
+p tree
