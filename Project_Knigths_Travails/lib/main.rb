@@ -48,12 +48,16 @@ end
 
 class Node
   attr_reader :childs, :position
-  def initialize(chess_piece, position = chess_piece.position)
+  def initialize(chess_piece,
+    parent = nil,
+    position = chess_piece.position
+    )
     @chess_piece = chess_piece
     @chess_piece.position = position
     @color = @chess_piece.color
     @position = position
     @valid_movements = @chess_piece.valid_movements
+    @parent = nil
     @childs = nil
     @child_array = nil
   end
@@ -72,7 +76,10 @@ class Node
     "Node of a #{@chess_piece.class} with properties ->
     position: #{@position},
     color: #{@color},
-    valid movements: #{@valid_movements} and
+    valid movements: #{@valid_movements},
+    parent: #{
+      @parent.nil? ? "nil" : @parent
+    } and
     childs: #{
       @childs.nil? ? "nil" : @child_array
     } \n"
@@ -80,7 +87,15 @@ class Node
 end
 
 class Tree
+  attr_reader :root
+
+  def initialize(chess_piece)
+    @root = Node.new(chess_piece)
+    @depth = 0
+  end
+
   
+
 end
 
 
@@ -92,15 +107,5 @@ p knight1.valid_movements
 knight1.position = [1,7]
 p knight1.valid_movements
 test = Node.new(knight1)
+puts "--------------------------------------"
 p test
-puts "--------------------------------------"
-test.add_childrens
-p test
-puts "--------------------------------------"
-test.childs.each do |child|
-  child.add_childrens
-end
-puts "--------------------------------------"
-test.childs.each do |child|
-  p child
-end
