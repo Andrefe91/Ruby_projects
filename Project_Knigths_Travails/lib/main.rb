@@ -80,11 +80,12 @@ class Node
 end
 
 class Tree
-  attr_reader :root
+  attr_reader :root, :last_level_nodes, :depth
 
   def initialize(chess_piece)
     @root = Node.new(chess_piece)
     @depth = 0
+    @last_level_nodes = [@root]
   end
 
   def add_childrens(node = @root)
@@ -102,23 +103,104 @@ class Tree
     node.child_array = valid_movements
   end
 
+  def print_tree
+    #Using a Breadth-first traversal we print the tree
+    node = @root
+    queue = [node]
+    children = []
 
+    while true
+      break if queue.empty?
+
+      queue.each do |node|
+        node == " <> " ? (print " <> ") : (print node.position)
+
+        next if node == " <> "
+
+        unless node.childs.nil?
+          node.childs.each do |child|
+            children << child
+          end
+          children.append(" <> ")
+        end
+      end
+
+      puts "\n ------ \n"
+      queue = children
+      children = []
+    end
+  end
+
+  def increase_depth
+    # Go trough each and every last node in the tree and
+    # add childrens to them. Each node can process and add their own
+    # children
+    @depth += 1
+    new_last_level_nodes = []
+
+    @last_level_nodes.each do |node|
+      add_childrens(node)
+
+      node.childs.each do |child|
+        new_last_level_nodes << child
+      end
+    end
+
+    @last_level_nodes = new_last_level_nodes
+  end
+
+  def search_path(goal)
+    path = []
+    node_goal = search_node(goal)
+
+    while true
+      path << node_goal.position
+
+      break if node_goal.parent.nil?
+
+      node_goal = node_goal.parent
+
+    end
+
+    path = path.reverse
+  end
+
+  def search_node(goal)
+    # Increase the depth of the tree if in a level cant find
+    # the goal.
+
+    while true
+      @last_level_nodes.each do |node|
+        return node if node.position == goal
+      end
+      increase_depth
+    end
+  end
 end
 
 
-knight1 = Knight.new([0,0])
-knight1.movements
-p knight1.position
-p knight1.color
-p knight1.valid_movements
-knight1.position = [1,7]
-p knight1.valid_movements
-test = Node.new(knight1)
+def knight_moves(start, goal)
+  tree = Tree.new(Knight.new(start))
+  print_path(tree.search_path(goal), tree.depth)
+end
+
+def print_path(path, depth)
+
+  puts "You made it in #{depth} moves. Here's your path:"
+
+  path.each do |position|
+    p position
+  end
+end
+
 puts "--------------------------------------"
-p test
-puts "--------------------------------------"
-tree = Tree.new(Knight.new([1,7]))
-p tree
-puts "--------------------------------------"
-tree.add_childrens
-p tree
+
+knight_moves([3,3],[0,0])
+
+#output is:
+#
+#You made it in 2 moves. Here's your path:
+#
+#[3, 3]
+#[2, 1]
+#[0, 0]
