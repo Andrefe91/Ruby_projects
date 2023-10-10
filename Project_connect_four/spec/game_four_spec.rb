@@ -1,5 +1,6 @@
 
 require_relative '../lib/player'
+require_relative '../lib/board'
 
 describe Player do
 
@@ -42,6 +43,8 @@ describe Player do
       end
     end
   end
+end
 
+describe Board do
   
 end
