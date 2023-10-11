@@ -85,18 +85,42 @@ describe Board do
   describe "#available_row" do
     subject(:row_check) {described_class.new}
 
-    context "when the board is empty" do
+    context "when need to check the state of a column" do
 
-      before do
-        Board.instance_variable_set(:@board_array, Array.new(5, (Array.new(7, "\u{1F518}"))).append(["\u{1F535}","\u{1F535}","\u{1F535}","\u{1F535}","\u{1F535}","\u{1F535}","\u{1F535}"]))
-      end
-
-      it "returns five as the available row" do
+      it "returns five as the available row with empty column" do
         row = row_check.available_row(1)
         expect(row).to be 5
       end
 
+      it "returns four when the bottom is unavailable" do
+        row_check.board_array[5][0] = "\u{1F535}"
+        row = row_check.available_row(1)
+        expect(row).to be 4
+      end
 
+
+    end
+  end
+
+  describe "#add_to_column" do
+    context "When a player adds a token to the board" do
+      subject(:add_token) {described_class.new}
+
+      it "returns false if the column number is less than 1" do
+        expect(add_token.add_to_column(0,"\u{1F535}")).to be false
+      end
+
+      it "returns true if the token was added successfully" do
+        adds = add_token.add_to_column(1, "\u{1F535}")
+        expect(adds).to be true
+      end
+
+      it "adds the token to the selected column" do
+        add_token.add_to_column(1, "\u{1F535}")
+        in_array = add_token.board_array[5][0]
+
+        expect(in_array).to be("\u{1F535}")
+      end
 
     end
   end

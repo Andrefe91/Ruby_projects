@@ -1,13 +1,23 @@
 class Board
-  attr_reader :board_array
+  attr_accessor :board_array
 
   #Initialize an empty array
   def initialize
-    @board_array = Array.new(6, (Array.new(7, "\u{1F518}")))
+    @board_array = []
+
+    6.times do |row|
+      @board_array.append((Array.new(7, "\u{1F518}")))
+    end
   end
 
   def add_to_column(column, token)
+    return false unless (column_full?(column)) #Dont to anything if the column is full
 
+    row = available_row(column)
+
+    @board_array[row][column-1] = token
+
+    return true
   end
 
   def column_full?(column)
@@ -25,6 +35,10 @@ class Board
 
     return 5
   end
-
-
 end
+
+test = Board.new
+
+test.add_to_column(1,"\u{1F535}")
+
+p test.board_array
