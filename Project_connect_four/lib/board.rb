@@ -46,6 +46,10 @@ class Board
     puts "--------------------------------"
   end
 
+  def win?
+    
+  end
+
 end
 
 #test = Board.new

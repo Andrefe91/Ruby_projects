@@ -149,4 +149,69 @@ describe Game_four do
       end
     end
   end
+
+  describe "#game_loop" do
+
+  end
+
+  describe "#win?" do
+    let(:board) { double('board')}
+
+    before do
+      #Stub the board method to return the double
+      allow(game).to receive(:board).and_return(board)
+    end
+
+    it "should call the win? method on the board object" do
+      expect(board).to receive(:win?)
+      game.win?
+    end
+
+  end
+
+  describe "#game_loop" do
+
+    context "when game_loop query tree times" do
+      let(:board_win) { double('board')}
+
+      before do
+        #Stub the board method to return the double
+        allow(game).to receive(:board).and_return(board_win)
+        allow(board_win).to receive(:win?).and_return(false, false, true)
+      end
+
+      it "calls three times the win? method on the board object" do
+        expect(board_win).to receive(:win?).at_least(3).times
+        game.game_loop
+      end
+    end
+  end
+
+  describe "#turn" do
+    context "when requested with turn," do
+
+      before do
+        allow(game).to receive(:gets).and_return("Andres", "Joshua")
+        game.require_players
+      end
+
+      it "return first player first" do
+        player = game.turn
+        expect(player.name).to eq ("Andres")
+      end
+
+      it "returns second player when asked twice" do
+        player = game.turn
+        player2 = game.turn
+        expect(player2.name).to eq ("Joshua")
+      end
+    end
+  end
+
+  describe "#call_player" do
+    context "When calling a player" do
+      let (:player_1) { double("Player 1", number: 1)}
+      let (:player_2) { double("Player 1", number: 1)}
+    end
+  end
 end
