@@ -35,10 +35,18 @@ class Board
 
     return 5
   end
+
+  def pretty_print
+    puts "The board as of now is: "
+    puts "--------------------------------"
+    6.times do |row|
+      p board_array[row]
+    end
+    p [' 1 ',' 2 ',' 3 ',' 4 ',' 5 ',' 6 ']
+    puts "--------------------------------"
+  end
+
 end
 
-test = Board.new
-
-test.add_to_column(1,"\u{1F535}")
-
-p test.board_array
+#test = Board.new
+#test.pretty_print

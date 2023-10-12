@@ -1,6 +1,7 @@
 
 require_relative '../lib/player'
 require_relative '../lib/board'
+require_relative '../lib/game_four'
 
 describe Player do
 
@@ -119,9 +120,33 @@ describe Board do
         add_token.add_to_column(1, "\u{1F535}")
         in_array = add_token.board_array[5][0]
 
-        expect(in_array).to be("\u{1F535}")
+        expect(in_array).to eq("\u{1F535}")
       end
 
+    end
+  end
+end
+
+describe Game_four do
+  subject(:game) {described_class.new}
+
+  describe "#require_players" do
+    context "When the two players are registered" do
+      before do
+        player1_name = "Andres"
+        player2_name = "Joshua"
+
+        allow(game).to receive(:gets).and_return(player1_name, player2_name)
+        game.require_players
+      end
+
+      it "save the names of both players" do
+        player1 = game.player1.name
+        player2 = game.player2.name
+
+        expect(player1).to eq "Andres"
+        expect(player2).to eq "Joshua"
+      end
     end
   end
 end
