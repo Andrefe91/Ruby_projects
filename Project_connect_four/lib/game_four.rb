@@ -39,8 +39,8 @@ class Game_four
   end
 
   def call_player(player)
-    puts "Ok Player ##{player.number}, it's your turn!"
-    puts "Choose a Column:"
+    puts "Ok #{player.name}, it's your turn!"
+    print "Choose a Column: "
   end
 
   def turn
@@ -60,5 +60,5 @@ class Game_four
 
 end
 
-test = Game_four.new
-test.game_loop
+#test = Game_four.new
+#test.game_loop

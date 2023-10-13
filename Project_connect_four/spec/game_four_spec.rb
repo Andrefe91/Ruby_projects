@@ -173,6 +173,7 @@ describe Game_four do
       before do
         #Stub the board method to return the double
         allow(game).to receive(:board).and_return(board_win)
+        allow(board_win).to receive(:pretty_print)
         allow(board_win).to receive(:win?).and_return(false, false, true)
       end
 
@@ -206,16 +207,16 @@ describe Game_four do
 
   describe "#call_player" do
     context "When calling a player" do
-      let (:player_1) { double("Player 1", number: 1)}
-      let (:player_2) { double("Player 2", number: 2)}
+      let (:player_1) { double("Player 1", name: "Andres")}
+      let (:player_2) { double("Player 2", name: "Joshua")}
 
-      it "calls the Player #1" do
-        phrase = "Ok Player #1, it's your turn!\nChoose a Column:\n"
+      it "calls the Player #1 by name" do
+        phrase = "Ok Andres, it's your turn!\nChoose a Column: "
         expect {game.call_player(player_1)}.to output(phrase).to_stdout
       end
 
-      it "calls the Player #2" do
-        phrase = "Ok Player #2, it's your turn!\nChoose a Column:\n"
+      it "calls the Player #2 by name" do
+        phrase = "Ok Joshua, it's your turn!\nChoose a Column: "
         expect {game.call_player(player_2)}.to output(phrase).to_stdout
       end
     end
