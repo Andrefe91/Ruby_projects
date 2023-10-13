@@ -170,6 +170,7 @@ describe Game_four do
     context "when game_loop query tree times" do
       let(:board_win) { double('board')}
 
+
       before do
         #Stub the board method to return the double
         allow(game).to receive(:board).and_return(board_win)

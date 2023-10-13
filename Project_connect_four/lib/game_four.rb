@@ -27,10 +27,12 @@ class Game_four
   #Creating the loop for the game
   def game_loop
     require_players
+    board.pretty_print
     until win? do
       player = turn
       call_player(player)
-
+      add_to_column(player)
+      board.pretty_print
     end
   end
 
@@ -60,5 +62,5 @@ class Game_four
 
 end
 
-#test = Game_four.new
-#test.game_loop
+test = Game_four.new
+test.game_loop
