@@ -75,10 +75,10 @@ describe Board do
         expect(full).to be false
       end
 
-      it "returns false when column number is less than 1" do
+      it "returns true when column number is less than 1" do
         full = column_check.column_full?(0)
 
-        expect(full).to be false
+        expect(full).to be true
       end
     end
   end

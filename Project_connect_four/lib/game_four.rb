@@ -60,7 +60,11 @@ class Game_four
     @board.add_to_column(column, player.token)
   end
 
+  def valid_selecion?(column)
+    
+  end
+
 end
 
-#test = Game_four.new
-#test.game_loop
+test = Game_four.new
+test.game_loop

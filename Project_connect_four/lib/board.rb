@@ -20,7 +20,7 @@ class Board
   end
 
   def column_full?(column)
-    return false unless column > 0 #Dont accept any column less than 1
+    return true unless column > 0 #Dont accept any column less than 1
     board_array[0][column-1] == "\u{1F518}" ?  false :  true
   end
 
