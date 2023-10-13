@@ -62,5 +62,5 @@ class Game_four
 
 end
 
-test = Game_four.new
-test.game_loop
+#test = Game_four.new
+#test.game_loop

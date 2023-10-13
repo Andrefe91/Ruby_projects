@@ -72,7 +72,7 @@ describe Board do
       it "column one is empty" do
         full = column_check.column_full?(1)
 
-        expect(full).to be true
+        expect(full).to be false
       end
 
       it "returns false when column number is less than 1" do

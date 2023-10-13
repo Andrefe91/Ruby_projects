@@ -11,8 +11,7 @@ class Board
   end
 
   def add_to_column(column, token)
-    return false unless (column_full?(column)) #Dont to anything if the column is full
-
+    return false if (column_full?(column)) #Dont to anything if the column is full
     row = available_row(column)
 
     @board_array[row][column-1] = token
@@ -22,7 +21,7 @@ class Board
 
   def column_full?(column)
     return false unless column > 0 #Dont accept any column less than 1
-    board_array[column-1] == "\u{1F518}" ? false : true
+    board_array[0][column-1] == "\u{1F518}" ?  false :  true
   end
 
   def available_row(column)
