@@ -17,6 +17,20 @@ RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
+
+  config.before(:each) do
+    allow($stdout).to receive(:puts)
+    allow($stdout).to receive(:write)
+  end
+
+  # By using these allow statements in the before(:each) block,
+  # you effectively replace the puts and write methods on $stdout
+  # with stubs that do nothing, preventing any output from being
+  #displayed when your test examples are run. This can make your
+  #test output cleaner and easier to read, while still allowing you
+  #to test the functionality of your code.
+
+
   config.expect_with :rspec do |expectations|
     # This option will default to `true` in RSpec 4. It makes the `description`
     # and `failure_message` of custom matchers include text for helper methods

@@ -6,7 +6,8 @@ class Player
 
   def initialize(name)
     @name = name
-    @token = @@tokens[@@player]
+    @token = @@tokens[@@number]
+    @number = @@number + 1
     @@number += 1
   end
 

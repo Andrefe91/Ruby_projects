@@ -18,18 +18,19 @@ class Game_four
 
   #Asking the players for their names and creating the player objects
   def require_players
-    puts "Name of player 1: "
+    print "Name of player 1: "
     @player1 = Player.new(gets.chomp)
-    puts "Name of player 2: "
+    print "Name of player 2: "
     @player2 = Player.new(gets.chomp)
   end
 
   #Creating the loop for the game
   def game_loop
+    require_players
     until win? do
       player = turn
       call_player(player)
-      
+
     end
   end
 
@@ -38,7 +39,7 @@ class Game_four
   end
 
   def call_player(player)
-    puts "Ok Player #{player.number}, it's your turn!"
+    puts "Ok Player ##{player.number}, it's your turn!"
     puts "Choose a Column:"
   end
 
@@ -52,4 +53,12 @@ class Game_four
     end
   end
 
+  def add_to_column(player)
+    column = gets.chomp.to_i
+    @board.add_to_column(column, player.token)
+  end
+
 end
+
+test = Game_four.new
+test.game_loop

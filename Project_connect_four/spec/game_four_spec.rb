@@ -23,7 +23,7 @@ describe Player do
 
       context "the token to the first player" do
         before do
-          Player.class_variable_set(:@@player, 0)
+          Player.class_variable_set(:@@number, 0)
         end
 
         it 'is assign as: 🔵' do
@@ -34,7 +34,7 @@ describe Player do
 
       context "the token to the second player" do
         before do
-          Player.class_variable_set(:@@player, 1)
+          Player.class_variable_set(:@@number, 1)
         end
 
         it 'is assign as: 🔴' do
@@ -150,10 +150,6 @@ describe Game_four do
     end
   end
 
-  describe "#game_loop" do
-
-  end
-
   describe "#win?" do
     let(:board) { double('board')}
 
@@ -211,7 +207,17 @@ describe Game_four do
   describe "#call_player" do
     context "When calling a player" do
       let (:player_1) { double("Player 1", number: 1)}
-      let (:player_2) { double("Player 1", number: 1)}
+      let (:player_2) { double("Player 2", number: 2)}
+
+      it "calls the Player #1" do
+        phrase = "Ok Player #1, it's your turn!\nChoose a Column:\n"
+        expect {game.call_player(player_1)}.to output(phrase).to_stdout
+      end
+
+      it "calls the Player #2" do
+        phrase = "Ok Player #2, it's your turn!\nChoose a Column:\n"
+        expect {game.call_player(player_2)}.to output(phrase).to_stdout
+      end
     end
   end
 end
