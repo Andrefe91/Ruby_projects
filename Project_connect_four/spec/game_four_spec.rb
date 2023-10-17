@@ -222,4 +222,8 @@ describe Game_four do
       end
     end
   end
+
+  describe "#valid_selection?" do
+    context "When "
+  end
 end

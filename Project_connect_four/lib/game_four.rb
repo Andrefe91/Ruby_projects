@@ -57,11 +57,20 @@ class Game_four
 
   def add_to_column(player)
     column = gets.chomp.to_i
+    valid_selecion?(column)
     @board.add_to_column(column, player.token)
   end
 
   def valid_selecion?(column)
-    
+    while true
+      break if column.between?(1,7)
+      error_message
+    end
+  end
+
+  def error_message
+    puts "xxx -> Error - Column number not valid <- xxx"
+    puts "Choose another column: "
   end
 
 end
