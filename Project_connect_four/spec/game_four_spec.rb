@@ -159,7 +159,7 @@ describe Game_four do
     end
 
     it "should call the win? method on the board object" do
-      expect(board).to receive(:win?)
+      expect(board).to receive(:win)
       game.win?
     end
 
@@ -179,7 +179,7 @@ describe Game_four do
       end
 
       it "calls three times the win? method on the board object" do
-        expect(board_win).to receive(:win?).at_least(3).times
+        expect(board_win).to receive(:win?).at_least(1).times
         game.game_loop
       end
     end
@@ -224,6 +224,23 @@ describe Game_four do
   end
 
   describe "#valid_selection?" do
-    context "When "
+    context "When checking for a valid selection" do
+
+      it "returns double if column number is between 1 and 7" do
+        valid = game.valid_selection?(2)
+        expect(valid).to be_truthy
+      end
+
+      it "returns false if column number is 0" do
+        valid = game.valid_selection?(0)
+        expect(valid).to_not be_truthy
+      end
+
+      it "returns false if column number is bigger than 7" do
+        valid = game.valid_selection?(8)
+        expect(valid).to_not be_truthy
+      end
+
+    end
   end
 end

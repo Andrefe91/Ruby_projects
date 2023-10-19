@@ -1,9 +1,11 @@
 class Board
+  attr_reader :win
   attr_accessor :board_array
 
   #Initialize an empty array
   def initialize
     @board_array = []
+    @win = false
 
     6.times do |row|
       @board_array.append((Array.new(7, "\u{1F518}")))
@@ -16,6 +18,10 @@ class Board
 
     @board_array[row][column-1] = token
 
+    #For every added token, check if the win condition is satisfied
+    win_check(row, column)
+
+    #Return true so it can be check if the column was added successfully
     return true
   end
 
@@ -45,8 +51,8 @@ class Board
     puts "--------------------------------"
   end
 
-  def win?
-    return false
+  def win_check(rown, column)
+
   end
 
 end

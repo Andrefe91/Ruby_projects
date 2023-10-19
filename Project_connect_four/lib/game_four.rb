@@ -11,11 +11,6 @@ class Game_four
     @turn = 0
   end
 
-  #Main logic for the game, connecting all functions and classes
-  def play
-
-  end
-
   #Asking the players for their names and creating the player objects
   def require_players
     print "Name of player 1: "
@@ -24,20 +19,21 @@ class Game_four
     @player2 = Player.new(gets.chomp)
   end
 
-  #Creating the loop for the game
+  #Creating the loop for the game and the main logic, connecting all functions
+  #and classes in the script
   def game_loop
     require_players
     board.pretty_print
     until win? do
       player = turn
       call_player(player)
-      add_to_column(player)
+      add_token(player)
       board.pretty_print
     end
   end
 
   def win?
-    board.win?
+    board.win
   end
 
   def call_player(player)
@@ -55,22 +51,26 @@ class Game_four
     end
   end
 
-  def add_to_column(player)
-    column = gets.chomp.to_i
-    valid_selecion?(column)
+  def add_token(player)
+    while true
+      column = gets.chomp.to_i
+      break if valid_selection?(column)
+      error_message
+    end
     @board.add_to_column(column, player.token)
   end
 
-  def valid_selecion?(column)
-    while true
-      break if column.between?(1,7)
-      error_message
-    end
+  def valid_selection?(column)
+    #Check if column is full, if so, then it's not a valid selection
+    board.column_full?(column) ? (return false) : (return true)
+
+    #Check if the column's number is valid per game rules
+    column.between?(1,7) ? (return true) : (return false)
   end
 
   def error_message
     puts "xxx -> Error - Column number not valid <- xxx"
-    puts "Choose another column: "
+    print "Choose another column: "
   end
 
 end
