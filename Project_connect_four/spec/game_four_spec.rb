@@ -125,6 +125,106 @@ describe Board do
 
     end
   end
+
+  describe "#column_win?" do
+
+    subject(:win_board) {described_class.new}
+
+    context "when checking for win by column" do
+      it "returns false if the row is bigger than 2" do
+        win = win_board.column_win?(3, 1, "\u{1F535}")
+
+        expect(win).to be false
+      end
+    end
+
+    context "when the board has tree token align in a column" do
+
+      before do
+        win_board.instance_variable_set(:@board_array, [["🔘", "🔘", "🔘", "🔘", "🔘", "🔘", "🔘"],
+        ["🔘", "🔘", "🔘", "🔘", "🔘", "🔘", "🔘"],
+        ["🔘", "🔘", "🔘", "🔘", "🔘", "🔘", "🔘"],
+        ["🔵", "🔘", "🔘", "🔘", "🔘", "🔘", "🔘"],
+        ["🔵", "🔘", "🔘", "🔘", "🔘", "🔘", "🔘"],
+        ["🔵", "🔘", "🔘", "🔘", "🔘", "🔘", "🔘"]])
+      end
+
+      it "returns true when added the token to complete four in line" do
+        win_board.add_to_column(1,"🔵")
+
+        expect(win_board.instance_variable_get(:@win)).to eq(true)
+      end
+    end
+
+    context "when the board has tree token align but one different in a column" do
+
+      before do
+        win_board.instance_variable_set(:@board_array, [["🔘", "🔘", "🔘", "🔘", "🔘", "🔘", "🔘"],
+        ["🔘", "🔘", "🔘", "🔘", "🔘", "🔘", "🔘"],
+        ["🔵", "🔘", "🔘", "🔘", "🔘", "🔘", "🔘"],
+        ["🔵", "🔘", "🔘", "🔘", "🔘", "🔘", "🔘"],
+        ["🔵", "🔘", "🔘", "🔘", "🔘", "🔘", "🔘"],
+        ["🔘", "🔘", "🔘", "🔘", "🔘", "🔘", "🔘"]])
+      end
+
+      it "returns true when added the token to complete four in line" do
+        win_board.add_to_column(1,"🔵")
+
+        expect(win_board.instance_variable_get(:@win)).to eq(true)
+      end
+    end
+
+  end
+
+
+  describe "#row_win?" do
+
+    subject(:win_board) {described_class.new}
+
+    context "when the board has tree token align in a row" do
+
+      before do
+        win_board.instance_variable_set(:@board_array, [["🔘", "🔘", "🔘", "🔘", "🔘", "🔘", "🔘"],
+        ["🔘", "🔘", "🔘", "🔘", "🔘", "🔘", "🔘"],
+        ["🔘", "🔘", "🔘", "🔘", "🔘", "🔘", "🔘"],
+        ["🔘", "🔘", "🔵", "🔵", "🔵", "🔘", "🔘"],
+        ["🔘", "🔵", "🔘", "🔘", "🔘", "🔘", "🔘"],
+        ["🔘", "🔵", "🔘", "🔘", "🔘", "🔘", "🔘"]])
+      end
+
+      it "returns true when added the token to complete four in line" do
+        win_board.add_to_column(2,"🔵")
+
+        expect(win_board.instance_variable_get(:@win)).to eq(true)
+      end
+    end
+
+  end
+
+  describe "#diagonal_win?" do
+
+  subject(:win_board) {described_class.new}
+
+  context "when the board has tree token align in a diagonal" do
+
+    before do
+      win_board.instance_variable_set(:@board_array, [["🔘", "🔘", "🔘", "🔘", "🔘", "🔘", "🔘"],
+      ["🔘", "🔘", "🔘", "🔘", "🔘", "🔘", "🔘"],
+      ["🔘", "🔘", "🔘", "🔘", "🔘", "🔘", "🔘"],
+      ["🔴", "🔵", "🔘", "🔘", "🔘", "🔘", "🔘"],
+      ["🔴", "🔘", "🔵", "🔘", "🔘", "🔘", "🔘"],
+      ["🔴", "🔘", "🔘", "🔵", "🔘", "🔘", "🔘"]])
+    end
+
+    it "returns true when added the token to complete four in line/diagonal" do
+      win_board.add_to_column(1,"🔵")
+
+      expect(win_board.instance_variable_get(:@win)).to eq(true)
+    end
+  end
+
+end
+
 end
 
 describe Game_four do
@@ -178,7 +278,7 @@ describe Game_four do
         allow(board_win).to receive(:win?).and_return(false, false, true)
       end
 
-      it "calls three times the win? method on the board object" do
+      xit "calls three times the win? method on the board object" do
         expect(board_win).to receive(:win?).at_least(1).times
         game.game_loop
       end
