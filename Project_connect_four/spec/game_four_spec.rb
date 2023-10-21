@@ -267,7 +267,7 @@ describe Game_four do
 
   describe "#game_loop" do
 
-    context "when game_loop query tree times" do
+    context "when game_loop queries the board tree times" do
       let(:board_win) { double('board')}
 
 
@@ -275,12 +275,13 @@ describe Game_four do
         #Stub the board method to return the double
         allow(game).to receive(:board).and_return(board_win)
         allow(board_win).to receive(:pretty_print)
-        allow(board_win).to receive(:win?).and_return(false, false, true)
+        allow(board_win).to receive(:column_full?)
+        allow(board_win).to receive(:win).and_return(false, false, true)
       end
 
-      xit "calls three times the win? method on the board object" do
-        expect(board_win).to receive(:win?).at_least(1).times
+      it "calls three times the win value on the board object" do
         game.game_loop
+        expect(board_win).to have_received(:win).exactly(3).times
       end
     end
   end
