@@ -30,6 +30,8 @@ class Game_four
       add_token(player)
       board.pretty_print
     end
+
+    call_winner(player)
   end
 
   def win?
@@ -71,6 +73,10 @@ class Game_four
   def error_message
     puts "xxx -> Error - Column number not valid <- xxx"
     print "Choose another column: "
+  end
+
+  def call_winner(player)
+    puts "Congratulations #{player.name}, you WON the game !!"
   end
 
 end

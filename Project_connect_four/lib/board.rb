@@ -55,7 +55,7 @@ class Board
 
     @win = true if column_win?(rown, column, token)
     @win = true if row_win?(rown, column, token)
-    diagonal_win?(rown, column, token)
+    @win = true if diagonal_win?(rown, column, token)
   end
 
   def column_win?(row, column, token)
@@ -107,52 +107,44 @@ class Board
     diagonal_left = [token]
 
     #Main condition to check:
-    #If the upper-right diagonal token is nil
     #If the column number is 0
     #If the upper-right diagonal token is the same as the player token
 
-    unless  ( column > 0 || !(board[row-1][column-1] == token))
+    until  ( column_right == 0 || !(board[row_right-1][column_right-1] == token))
       row_right -= 1
       column_right -= 1
+      puts "hi right"
     end
 
     #Main condition to check:
-    #If the upper-left diagonal token is nil
     #If the column number is 0
     #If the upper-left diagonal token is the same as the player token
 
-    unless  ( column < 6 || !(board[row-1][column+1] == token))
+    until  ( column_left == 6 || !(board[row_left-1][column_left+1] == token))
       row_left -= 1
       column_left += 1
+      puts "hi left"
     end
 
-    puts "Row Right: #{row_right}"
-    puts "Row Left: #{row_left}"
-
-
     #Populate the diagonal right array from the board
-    unless board[row_right + 1].nil?
+    until board[row_right + 1].nil?
       diagonal_right.append(board[row_right + 1][column_right + 1])
       row_right += 1
       column_right += 1
-      puts "Row Right: #{row_right}"
-      p board[row_right]
-      puts "board[row_right + 2].nil?: #{board[row_right + 1].nil?}"
-      p board[row_right+1]
     end
 
     #Populate the diagonal left array from the board
-    unless board[row_left + 1].nil?
+    until board[row_left + 1].nil?
       diagonal_left.append(board[row_left + 1][column_left - 1])
       row_left += 1
       column_left -= 1
     end
 
-    p diagonal_left
-    p diagonal_right
+    repetition_left = diagonal_left.count(token)
+    repetition_right = diagonal_right.count(token)
 
-    puts "Row Right: #{row_right}"
-    puts "Row Left: #{row_left}"
+    (repetition_left > 3 || repetition_right > 3) ? (return true) : (return false)
+
   end
 
 end
